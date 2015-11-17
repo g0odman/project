@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include "SP_Stack.h"
 
 /**
  * Defines a messaging mechanism to indicate errors in operations.
@@ -46,16 +47,12 @@ typedef struct {
 } SP_STACK_ELEMENT;
 
 /**
- * This is a declaration of struct which represent a stack.
- * You will need to define the stack in SP_Stack.c
- * You can do so by copying the following code to SP_Stack.c:
+ * This struct represents a stack.
  *
- * struct sp_stack_struct {
- * 		//Definition goes here
- * };
  */
-typedef struct sp_stack_struct{
-    //definition goes here   
+typedef struct sp_stack_struct {
+    int size;
+    SP_STACK_ELEMENT *stack;
 }
 
 /**
@@ -72,14 +69,8 @@ typedef struct sp_stack_struct{
  * @return
  *		A pointer to a new empty stack, if any error occurred NULL is returned.
  */
-SP_STACK* spStackCreate(SP_STACK_MSG* msg){
-    void * stack;
-    if ((stack = malloc(1024)) ==1){
-        msg = P_STACK_ERROR_ALLOCATION_FAILED;
-        return NULL;
-    }
-    msg = SP_STACK_SUCCESS;
-    return stack;
+SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
+	//TODO
     
 }
 
@@ -90,8 +81,8 @@ SP_STACK* spStackCreate(SP_STACK_MSG* msg){
  * 					 After invoking spStackDestroy, stack will no longer be valid to use.
  * 					 If stack==NULL nothing happens.
  */
-void spStackDestroy(SP_STACK* stack){
-    free(stack);
+void spStackDestroy(SP_STACK* stack) {
+	//TODO
 }
 
 /**
@@ -110,7 +101,9 @@ void spStackDestroy(SP_STACK* stack){
  * @return
  * The top element of the stack if the stack is not empty, otherwise NULL is returned.
  */
-SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg);
+SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg) {
+	//TODO
+}
 
 /**
  * Removes the top of the stack.
@@ -127,7 +120,9 @@ SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg);
  * A stack after the pop operation. If the stack is empty the new stack will be
  * the same as the old one. In case stack is NULL
  */
-SP_STACK* spStackPop(SP_STACK* stack, SP_STACK_MSG* msg);
+SP_STACK* spStackPop(SP_STACK* stack, SP_STACK_MSG* msg) {
+	//TODO
+}
 
 /**
  * Pushes a new element to the top of the stack. The element pushed to the stack
@@ -150,7 +145,9 @@ SP_STACK* spStackPop(SP_STACK* stack, SP_STACK_MSG* msg);
  * In case of success, the stack after the push operation.
  *
  */
-SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG* msg);
+SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG* msg) {
+	//TODO
+}
 
 /**
  * Checks if the stack is Empty.
@@ -165,6 +162,8 @@ SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG*
  * @return
  * true in case stack is empty, otherwise the returned value is false.
  */
-bool spStackIsEmpty(SP_STACK* stack, SP_STACK_MSG* msg);
+bool spStackIsEmpty(SP_STACK* stack, SP_STACK_MSG* msg) {
+	//TODO
+}
 
 #endif /* SP_STACK_H_ */
