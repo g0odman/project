@@ -2,16 +2,19 @@
 #include "SP_Stack.h"
 #include <stdlib.h>
 
+//max num of elements is 1024
+#define MAX_STACK_SIZE 1024
+
 /**
  * This struct represents a stack.
  * 
  * 		int size - represents the amount of elements currently in stack
- * 		SP_STACK_ELEMENT *stack - pointer to array of elements
+ * 		SP_STACK_ELEMENT *array - pointer to array of elements
  *
  */
 struct sp_stack_struct {
     int size;
-    SP_STACK_ELEMENT *stack;
+    SP_STACK_ELEMENT *array;
 };
 
 /**
@@ -29,7 +32,33 @@ struct sp_stack_struct {
  *		A pointer to a new empty stack, if any error occurred NULL is returned.
  */
 SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
-	//SP_STACK *s = NULL;
+	
+	//allocate pointer:
+	SP_STACK *s;
+	s = (SP_STACK*)malloc(sizeof(SP_STACK));
+	
+	//check if allocation worked
+	if(s == NULL){
+		if(msg != NULL){
+			*msg = P_STACK_ERROR_ALLOCATION_FAILED;
+		}
+		return NULL;
+	}
+	
+	//initialize s (assume max-size = 1024):
+	s->size = 0;
+	s->array = (SP_STACK_ELEMENT*)malloc(sizeof(SP_STACK_ELEMENT)*MAX_STACK_SIZE);
+	
+	//check if initialization worked:
+	if(s->array == NULL){
+		if(msg != NULL){
+			*msg = P_STACK_ERROR_ALLOCATION_FAILED;
+		}
+		return NULL;
+	}
+	
+	//return the new stack:
+	return s;
     
 }
 
@@ -41,7 +70,16 @@ SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
  * 					 If stack==NULL nothing happens.
  */
 void spStackDestroy(SP_STACK* stack) {
-	//TODO
+	//check stack isn't null:
+	if(stack == NULL){
+		return;
+	}
+	
+	//free pointer to array:
+	free(stack->array);
+	
+	//free stack:
+	free(stack)
 }
 
 /**
