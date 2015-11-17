@@ -76,15 +76,13 @@ SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
  */
 void spStackDestroy(SP_STACK* stack) {
 	
-	//TODO fix!!!!
-	
 	//check stack isn't null:
 	if(stack == NULL){
 		return;
 	}
 	
-	//free pointer to array:
-	free(stack->array);
+	//free pointer recursivly to top node (if it has no pointers to it):
+	deleteNode(stack->top);
 	
 	//free stack:
 	free(stack);
@@ -134,7 +132,7 @@ SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg) {
  * 						set the value of *msg.
  * @return
  * A stack after the pop operation. If the stack is empty the new stack will be
- * the same as the old one. In case stack is NULL
+ * the same as the old one. In case stack is NULL, return NULL
  */
 SP_STACK* spStackPop(SP_STACK* stack, SP_STACK_MSG* msg) {
 	
@@ -260,6 +258,9 @@ SP_STACK_NODE* makeNode(SP_STACK_ELEMENT value, SP_STACK_NODE* next) {
  * Decrement pointer counter, and delete recursivly if 0.
  */
 void deleteNode(SP_STACK_NODE* node){
+	//check node isn't null:
+	if(node == NULL) { return; }
+	
 	node->pointerCounter--;
 	if(node->pointerCounter == 0){
 		deleteNode(node->next);
