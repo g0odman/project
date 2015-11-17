@@ -34,7 +34,7 @@ bool TEST1(){
 	elementPtr = spStackTop(stack,&msg);
 	ASSERT_TRUE(msg == SP_STACK_ERROR_IS_EMPTY && elementPtr == NULL);
 	SP_STACK_ELEMENT newElement = {.type = NUMBER , .value = 100};
-	stack = spStackPush(stack,newElement,&msg);
+	stack = spStackPush(stack,newElement,&msg); //memory leak!
 	ASSERT_TRUE(msg == SP_STACK_SUCCESS);
 	elementPtr = spStackTop(stack,&msg);
 	ASSERT_TRUE(elementPtr->type == newElement.type && elementPtr->value == newElement.value && msg==SP_STACK_SUCCESS);

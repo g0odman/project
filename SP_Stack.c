@@ -2,6 +2,7 @@
 #include "SP_Stack.h"
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 //max num of elements is 1024
 #define MAX_STACK_SIZE 1024
@@ -76,7 +77,7 @@ void spStackDestroy(SP_STACK* stack) {
 	stack->pointerCounter--;
 	
 	//recursivly delete if no more pointers to this
-	if(stack->pointerCounter == 0){
+	if(stack->pointerCounter <= 0){
 		spStackDestroy(stack->next);
 		free(stack);
 	}
@@ -102,14 +103,8 @@ SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg) {
 	
 	//check whether stack is null or empty, and update
 	//msg accordingly
-	if(!checkStack(stack, msg, PEAK)){
-		return NULL;
-	}
+	if(!checkStack(stack, msg, PEAK)){ return NULL; }
 	
-	//return top element:
-	if(msg != NULL){
-		*msg = SP_STACK_SUCCESS;
-	}
 	return stack->value;
 }
 
@@ -163,11 +158,13 @@ SP_STACK* spStackPop(SP_STACK* stack, SP_STACK_MSG* msg) {
  */
 SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG* msg) {
 	
+	//make sure stack isn't null:
 	if(!checkStack(stack, msg, PUSH)) { return stack; }
 	
-	//TODO copy newElement
+	//make new stack with additional element:
 	SP_STACK *toRet =  makeNode(&newElement, stack);
 	
+	//make sure malloc didn't fail:
 	if(!checkStack(toRet, msg, MAKE)) { return stack; }
 	
 	return toRet;
