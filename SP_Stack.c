@@ -12,6 +12,15 @@ bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op);
 
 
 /**
+ * A single node in the linked chain of a stack.
+ */
+typedef struct SP_STACK_NODE {
+	SP_STACK_ELEMENT value;
+	struct SP_STACK_NODE *next;
+	int numOfPointers;
+}SP_STACK_NODE;
+
+/**
  * This struct represents a stack.
  * 
  * 		int size - represents the amount of elements currently in stack
@@ -20,7 +29,7 @@ bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op);
  */
 struct sp_stack_struct {
     int size;
-    SP_STACK_ELEMENT *array;
+    SP_STACK_NODE *top;
 };
 
 /**
@@ -44,24 +53,11 @@ SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
 	s = (SP_STACK*)malloc(sizeof(SP_STACK));
 	
 	//check if allocation worked
-	if(s == NULL){
-		if(msg != NULL){
-			*msg = SP_STACK_ERROR_ALLOCATION_FAILED;
-		}
-		return NULL;
-	}
+	if(!checkStack(s, msg, EMPTY)) { return NULL; };
 	
-	//initialize s (assume max-size = 1024):
+	//initialize s
 	s->size = 0;
-	s->array = (SP_STACK_ELEMENT*)malloc(sizeof(SP_STACK_ELEMENT)*MAX_STACK_SIZE);
-	
-	//check if initialization worked:
-	if(s->array == NULL){
-		if(msg != NULL){
-			*msg = SP_STACK_ERROR_ALLOCATION_FAILED;
-		}
-		return NULL;
-	}
+	s->top = NULL;
 	
 	//return the new stack and update message if necsessary:
 	if(msg != NULL){
@@ -79,6 +75,9 @@ SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
  * 					 If stack==NULL nothing happens.
  */
 void spStackDestroy(SP_STACK* stack) {
+	
+	//TODO fix!!!!
+	
 	//check stack isn't null:
 	if(stack == NULL){
 		return;
@@ -119,7 +118,7 @@ SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg) {
 	if(msg != NULL){
 		*msg = SP_STACK_SUCCESS;
 	}
-	return (stack->array) + stack->size;
+	return &(stack->top->value);
 }
 
 /**
@@ -138,7 +137,10 @@ SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg) {
  * the same as the old one. In case stack is NULL
  */
 SP_STACK* spStackPop(SP_STACK* stack, SP_STACK_MSG* msg) {
-	//TODO
+	
+	if(!checkStack(stack, msg, PEAK)) { return stack; }
+	
+	//TODO finish
 }
 
 /**
@@ -163,7 +165,9 @@ SP_STACK* spStackPop(SP_STACK* stack, SP_STACK_MSG* msg) {
  *
  */
 SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG* msg) {
-	//TODO
+	if(!checkStack(stack, msg, PUSH)) { return stack; }
+	
+	//TODO finish
 }
 
 /**
@@ -180,12 +184,17 @@ SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG*
  * true in case stack is empty, otherwise the returned value is false.
  */
 bool spStackIsEmpty(SP_STACK* stack, SP_STACK_MSG* msg) {
-	//TODO
+	
+	//check whether stack is null:
+	if(!checkStack(stack, msg, EMPTY)) { return false; };
+	
+	return (stack->size == 0);
 }
 
 /**
- * Used by other functions. Checks whether stack
- * is null, empty or full, and updates msg accordingly.
+ * Auxillary function used by other functions.
+ * Checks whether stack is null, empty or full,
+ * and updates msg accordingly.
  * 
  * returns true if not empty and not null
  * 
@@ -209,7 +218,7 @@ bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op) {
 	}
 	
 	//check whether stack is full and trying to write:
-	if(stack->size == MAX_STACK_SIZE && op == PUSH){
+	if(stack->size >= MAX_STACK_SIZE && op == PUSH){
 		if(msg != NULL){
 			*msg = SP_STACK_ERROR_ALLOCATION_FAILED;
 		}
