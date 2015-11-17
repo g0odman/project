@@ -7,7 +7,7 @@
 #define MAX_STACK_SIZE 1024
 
 //used by checkStack:
-typedef enum {PEAK, PUSH, EMPTY} Operation;
+typedef enum {PEAK, PUSH, EMPTY, MAKE} Operation;
 
 //declaring auxillary functions:
 bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op);
@@ -51,12 +51,7 @@ SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
 	s = makeNode(NULL, NULL);
 	
 	//check if allocation worked
-	if(s == NULL){
-		if(msg != NULL){
-			*msg = SP_STACK_ERROR_ALLOCATION_FAILED;
-		}
-		return NULL;
-	}
+	if(!checkStack(s, msg, MAKE)) { return NULL; }
 	
 	//return the new stack and update message if necsessary:
 	if(msg != NULL){
@@ -170,9 +165,10 @@ SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG*
 	
 	if(!checkStack(stack, msg, PUSH)) { return stack; }
 	
+	//TODO copy newElement
 	SP_STACK *toRet =  makeNode(&newElement, stack);
 	
-	if(!checkStack(toRet, msg, EMPTY)) { return stack; }
+	if(!checkStack(toRet, msg, MAKE)) { return stack; }
 	
 	return toRet;
 }
@@ -217,7 +213,11 @@ bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op) {
 	//check whether stack is null:
 	if(stack == NULL){
 		if(msg != NULL){
-			*msg = SP_STACK_ERROR_NULL_ARGUMENT;
+			if(op == MAKE){ //check whether failed to make or incorrect input
+				*msg = SP_STACK_ERROR_ALLOCATION_FAILED;
+			} else {
+				*msg = SP_STACK_ERROR_NULL_ARGUMENT;
+			}
 		}
 		return false;
 	}
