@@ -17,7 +17,7 @@ bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op);
 typedef struct SP_STACK_NODE {
 	SP_STACK_ELEMENT value;
 	struct SP_STACK_NODE *next;
-	int numOfPointers;
+	int pointerCounter;
 }SP_STACK_NODE;
 
 /**
@@ -191,6 +191,12 @@ bool spStackIsEmpty(SP_STACK* stack, SP_STACK_MSG* msg) {
 	return (stack->size == 0);
 }
 
+
+
+
+/* Auxillary functions: */
+
+
 /**
  * Auxillary function used by other functions.
  * Checks whether stack is null, empty or full,
@@ -230,4 +236,33 @@ bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op) {
 		*msg = SP_STACK_SUCCESS;
 	}
 	return true;
+}
+
+/**
+ * Makes a new node:
+ */
+SP_STACK_NODE* makeNode(SP_STACK_ELEMENT value, SP_STACK_NODE* next) {
+	
+	//make node:
+	SP_STACK_NODE *n;
+	n = (SP_STACK_NODE*)malloc(sizeof(SP_STACK_NODE));
+	if(n == NULL) { return NULL; }
+	
+	//initialize:
+	n->value = value;
+	n->next = next;
+	n->pointerCounter = 1;
+	
+	return n;
+}
+
+/**
+ * Decrement pointer counter, and delete recursivly if 0.
+ */
+void deleteNode(SP_STACK_NODE* node){
+	node->pointerCounter--;
+	if(node->pointerCounter == 0){
+		deleteNode(node->next);
+		free(node);
+	}
 }
