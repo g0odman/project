@@ -132,7 +132,12 @@ SP_STACK* spStackPop(SP_STACK* stack, SP_STACK_MSG* msg) {
 	
 	if(!checkStack(stack, msg, PEAK)) { return stack; }
 	
-	//TODO finish
+	SP_STACK newTop = stack->next;
+	newTop->pointerCounter++; //make it also a top
+	
+	//spStackDestroy(stack) //not sure whether supposed to or not
+	
+	return newTop
 }
 
 /**
