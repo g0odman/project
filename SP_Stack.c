@@ -57,7 +57,10 @@ SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
 		return NULL;
 	}
 	
-	//return the new stack:
+	//return the new stack and update message if necsessary:
+	if(msg != null){
+		*msg = P_STACK_SUCCESS;
+	}
 	return s;
     
 }
