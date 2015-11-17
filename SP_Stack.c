@@ -34,7 +34,7 @@ struct sp_stack_struct {
  * Create a new empty stack.
  *
  * Messages:
- * 		P_STACK_ERROR_ALLOCATION_FAILED - In case allocation failed.
+ * 		SP_STACK_ERROR_ALLOCATION_FAILED - In case allocation failed.
  * 		SP_STACK_SUCCESS - In case creation of the stack succeeded.
  *
  * @param
@@ -45,13 +45,18 @@ struct sp_stack_struct {
  *		A pointer to a new empty stack, if any error occurred NULL is returned.
  */
 SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
-	SP_STACK *s;
 	
 	//allocate pointer:
+	SP_STACK *s;
 	s = makeNode(NULL, NULL);
 	
 	//check if allocation worked
-	if(!checkStack(s, msg, EMPTY)) { return NULL; };
+	if(s == NULL){
+		if(msg != NULL){
+			*msg = SP_STACK_ERROR_ALLOCATION_FAILED;
+		}
+		return NULL;
+	}
 	
 	//return the new stack and update message if necsessary:
 	if(msg != NULL){
@@ -254,8 +259,12 @@ SP_STACK* makeNode(SP_STACK_ELEMENT* value, SP_STACK* next) {
 	s->value = value;
 	s->next = next;
 	s->pointerCounter = 1;
-	if(next == NULL){ s->size = 0; }
-	else { s->size = next->size + 1; }
+	if(next == NULL){
+		s->size = 0;
+	} else {
+		s->size = next->size + 1;
+		next->pointerCounter++;
+	}
 	
 	return s;
 }
