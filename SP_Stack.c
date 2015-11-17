@@ -11,7 +11,7 @@
 typedef enum {PEAK, PUSH, EMPTY, MAKE} Operation;
 
 //declaring auxillary functions:
-bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op);
+bool checkStack(const SP_STACK* stack, SP_STACK_MSG* msg, Operation op);
 SP_STACK* makeNode(SP_STACK_ELEMENT* value, SP_STACK* next);
 
 
@@ -26,7 +26,7 @@ SP_STACK* makeNode(SP_STACK_ELEMENT* value, SP_STACK* next);
  */
 struct sp_stack_struct {
     int size;
-    SP_STACK_ELEMENT *value;
+    SP_STACK_ELEMENT *element;
     SP_STACK *next;
     int pointerCounter;
 };
@@ -101,11 +101,15 @@ void spStackDestroy(SP_STACK* stack) {
  */
 SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg) {
 	
+	//printf("%f\n", stack->element->value); //causes seg fault ! (?!)
+	
 	//check whether stack is null or empty, and update
 	//msg accordingly
 	if(!checkStack(stack, msg, PEAK)){ return NULL; }
 	
-	return stack->value;
+	printf("%f\n", stack->element->value);
+	
+	return stack->element;
 }
 
 /**
@@ -164,6 +168,8 @@ SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG*
 	//make new stack with additional element:
 	SP_STACK *toRet =  makeNode(&newElement, stack);
 	
+	printf("%f	%f\n", newElement.value, toRet->element->value);
+	
 	//make sure malloc didn't fail:
 	if(!checkStack(toRet, msg, MAKE)) { return stack; }
 	
@@ -205,7 +211,7 @@ bool spStackIsEmpty(SP_STACK* stack, SP_STACK_MSG* msg) {
  * returns true if not empty and not null
  * 
  */
-bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op) {
+bool checkStack(const SP_STACK* stack, SP_STACK_MSG* msg, Operation op) {
 	
 	//check whether stack is null:
 	if(stack == NULL){
@@ -245,7 +251,7 @@ bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op) {
 /**
  * Makes a new node:
  */
-SP_STACK* makeNode(SP_STACK_ELEMENT* value, SP_STACK* next) {
+SP_STACK* makeNode(SP_STACK_ELEMENT* element, SP_STACK* next) {
 	
 	//make node:
 	SP_STACK *s;
@@ -253,7 +259,7 @@ SP_STACK* makeNode(SP_STACK_ELEMENT* value, SP_STACK* next) {
 	if(s == NULL) {	return NULL; }
 	
 	//initialize:
-	s->value = value;
+	s->element = element;
 	s->next = next;
 	s->pointerCounter = 1;
 	if(next == NULL){
