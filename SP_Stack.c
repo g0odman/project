@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include "SP_Stack.h"
 #include <stdlib.h>
+#include <stdbool.h>
 
 //max num of elements is 1024
 #define MAX_STACK_SIZE 1024
@@ -102,7 +103,18 @@ void spStackDestroy(SP_STACK* stack) {
  * The top element of the stack if the stack is not empty, otherwise NULL is returned.
  */
 SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg) {
-	//TODO
+	
+	//check whether stack is null or empty, and update
+	//msg accordingly
+	if(!checkStack(stack, msg)){
+		return NULL
+	}
+	
+	//return top element:
+	if(msg != NULL){
+		*msg = SP_STACK_SUCCESS;
+	}
+	return (stack->array)[stack->size];
 }
 
 /**
@@ -163,5 +175,16 @@ SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG*
  * true in case stack is empty, otherwise the returned value is false.
  */
 bool spStackIsEmpty(SP_STACK* stack, SP_STACK_MSG* msg) {
+	//TODO
+}
+
+/**
+ * Used by other functions. Checks whether stack
+ * is null or empty, and updates msg accordingly.
+ * 
+ * returns true if not empty and not null
+ * 
+ */
+bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg) {
 	//TODO
 }
