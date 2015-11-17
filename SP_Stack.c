@@ -1,59 +1,18 @@
 #include <stdbool.h>
 #include "SP_Stack.h"
-
-/**
- * Defines a messaging mechanism to indicate errors in operations.
- * Each operation will receive a pointer to a SP_STACK_MSG. This will store
- * the message returned by the operation. Each returned message will be defined
- * in the operation later.
- */
-typedef enum  {
-	SP_STACK_ERROR_IS_EMPTY = -1,
-	SP_STACK_ERROR_ELEMENT_TYPE_NOT_SUPPORTED = -2,
-	SP_STACK_ERROR_ALLOCATION_FAILED = -3,
-	SP_STACK_ERROR_NULL_ARGUMENT = -4,
-	SP_STACK_ERROR_INVALID_ARGUMENT = -5,
-	SP_STACK_SUCCESS = 1
-} SP_STACK_MSG;
-
-/*************************************************
- * Definition of an element for the stack. The stack
- * element has a value and a type. The value is
- * not defined for all types beside NUMBER type. That
- * is if the type is NUMBER then the value field holds
- * the value of that number, otherwise the value is not defined.
- *************************************************/
-typedef enum {
-	PLUS,
-	MINUS,
-	MULTIPLICATION,
-	DIVISION,
-	DOLLAR,
-	NUMBER,
-	UNKNOWN
-} SP_STACK_ELEMENT_TYPE;
-
-/**
- * SP_Stack will hold an element of type SP_STACK_ELEMENT.
- * The element has two fields:
- * 		SP_STACKELEMENT_TYPE type - This enum indicates the type of the element.
- * 		double value -  If the type of the element is Number then value 
- *						will hold the value of the number represented by the
- * 						element. Otherwise there is not defined.
- */
-typedef struct {
-	SP_STACK_ELEMENT_TYPE type;
-	double value;
-} SP_STACK_ELEMENT;
+#include <stdlib.h>
 
 /**
  * This struct represents a stack.
+ * 
+ * 		int size - represents the amount of elements currently in stack
+ * 		SP_STACK_ELEMENT *stack - pointer to array of elements
  *
  */
-typedef struct sp_stack_struct {
+struct sp_stack_struct {
     int size;
     SP_STACK_ELEMENT *stack;
-}
+};
 
 /**
  * Create a new empty stack.
@@ -70,7 +29,7 @@ typedef struct sp_stack_struct {
  *		A pointer to a new empty stack, if any error occurred NULL is returned.
  */
 SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
-	//TODO
+	//SP_STACK *s = NULL;
     
 }
 
@@ -165,5 +124,3 @@ SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG*
 bool spStackIsEmpty(SP_STACK* stack, SP_STACK_MSG* msg) {
 	//TODO
 }
-
-#endif /* SP_STACK_H_ */
