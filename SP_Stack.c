@@ -12,24 +12,19 @@ bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op);
 
 
 /**
- * A single node in the linked chain of a stack.
- */
-typedef struct SP_STACK_NODE {
-	SP_STACK_ELEMENT value;
-	struct SP_STACK_NODE *next;
-	int pointerCounter;
-}SP_STACK_NODE;
-
-/**
  * This struct represents a stack.
  * 
  * 		int size - represents the amount of elements currently in stack
- * 		SP_STACK_ELEMENT *array - pointer to array of elements
+ * 		SP_STACK_ELEMENT value - the value of this node
+ * 		SP_STACK_ELEMENT *next - pointer to next element in linked list
+ * 		int pointerCounter - number of pointers to this node, for delete.
  *
  */
 struct sp_stack_struct {
     int size;
-    SP_STACK_NODE *top;
+    SP_STACK_ELEMENT *value;
+    struct SP_STACK_NODE *next;
+    int pointerCounter;
 };
 
 /**
@@ -49,15 +44,10 @@ struct sp_stack_struct {
 SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
 	
 	//allocate pointer:
-	SP_STACK *s;
-	s = (SP_STACK*)malloc(sizeof(SP_STACK));
+	s = makeNode(NULL, NULL);
 	
 	//check if allocation worked
 	if(!checkStack(s, msg, EMPTY)) { return NULL; };
-	
-	//initialize s
-	s->size = 0;
-	s->top = NULL;
 	
 	//return the new stack and update message if necsessary:
 	if(msg != NULL){
@@ -76,16 +66,16 @@ SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
  */
 void spStackDestroy(SP_STACK* stack) {
 	
-	//check stack isn't null:
-	if(stack == NULL){
-		return;
+	//check node isn't null:
+	if(stack == NULL) { return; }
+
+	stack->pointerCounter--;
+	
+	//recursivly delete if no more pointers to this
+	if(stack->pointerCounter == 0){
+		deleteNode(stack->next);
+		free(stack);
 	}
-	
-	//free pointer recursivly to top node (if it has no pointers to it):
-	deleteNode(stack->top);
-	
-	//free stack:
-	free(stack);
 }
 
 /**
@@ -116,7 +106,7 @@ SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg) {
 	if(msg != NULL){
 		*msg = SP_STACK_SUCCESS;
 	}
-	return &(stack->top->value);
+	return stack->value;
 }
 
 /**
@@ -239,31 +229,19 @@ bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op) {
 /**
  * Makes a new node:
  */
-SP_STACK_NODE* makeNode(SP_STACK_ELEMENT value, SP_STACK_NODE* next) {
+SP_STACK* makeNode(SP_STACK_ELEMENT* value, SP_STACK* next) {
 	
 	//make node:
-	SP_STACK_NODE *n;
-	n = (SP_STACK_NODE*)malloc(sizeof(SP_STACK_NODE));
-	if(n == NULL) { return NULL; }
+	SP_STACK *s;
+	s = (SP_STACK_NODE*)malloc(sizeof(SP_STACK_NODE));
+	if(s == NULL) {	return NULL; }
 	
 	//initialize:
-	n->value = value;
-	n->next = next;
-	n->pointerCounter = 1;
+	s->value = value;
+	s->next = next;
+	s->pointerCounter = 1;
+	if(next == NULL){ s->size = 0; }
+	else { s->size = next->size + 1; }
 	
-	return n;
-}
-
-/**
- * Decrement pointer counter, and delete recursivly if 0.
- */
-void deleteNode(SP_STACK_NODE* node){
-	//check node isn't null:
-	if(node == NULL) { return; }
-	
-	node->pointerCounter--;
-	if(node->pointerCounter == 0){
-		deleteNode(node->next);
-		free(node);
-	}
+	return s;
 }
