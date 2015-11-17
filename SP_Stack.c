@@ -8,7 +8,10 @@
 
 //used by checkStack:
 typedef enum {PEAK, PUSH, EMPTY} Operation;
+
+//declaring auxillary functions:
 bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op);
+SP_STACK* makeNode(SP_STACK_ELEMENT* value, SP_STACK* next);
 
 
 /**
@@ -23,7 +26,7 @@ bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op);
 struct sp_stack_struct {
     int size;
     SP_STACK_ELEMENT *value;
-    struct SP_STACK_NODE *next;
+    SP_STACK *next;
     int pointerCounter;
 };
 
@@ -42,6 +45,7 @@ struct sp_stack_struct {
  *		A pointer to a new empty stack, if any error occurred NULL is returned.
  */
 SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
+	SP_STACK *s;
 	
 	//allocate pointer:
 	s = makeNode(NULL, NULL);
@@ -73,7 +77,7 @@ void spStackDestroy(SP_STACK* stack) {
 	
 	//recursivly delete if no more pointers to this
 	if(stack->pointerCounter == 0){
-		deleteNode(stack->next);
+		spStackDestroy(stack->next);
 		free(stack);
 	}
 }
@@ -233,7 +237,7 @@ SP_STACK* makeNode(SP_STACK_ELEMENT* value, SP_STACK* next) {
 	
 	//make node:
 	SP_STACK *s;
-	s = (SP_STACK_NODE*)malloc(sizeof(SP_STACK_NODE));
+	s = (SP_STACK*)malloc(sizeof(SP_STACK));
 	if(s == NULL) {	return NULL; }
 	
 	//initialize:
