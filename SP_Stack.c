@@ -6,6 +6,11 @@
 //max num of elements is 1024
 #define MAX_STACK_SIZE 1024
 
+//used by checkStack:
+typedef enum {PEAK, PUSH, EMPTY} Operation;
+bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op);
+
+
 /**
  * This struct represents a stack.
  * 
@@ -41,7 +46,7 @@ SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
 	//check if allocation worked
 	if(s == NULL){
 		if(msg != NULL){
-			*msg = P_STACK_ERROR_ALLOCATION_FAILED;
+			*msg = SP_STACK_ERROR_ALLOCATION_FAILED;
 		}
 		return NULL;
 	}
@@ -53,14 +58,14 @@ SP_STACK* spStackCreate(SP_STACK_MSG* msg) {
 	//check if initialization worked:
 	if(s->array == NULL){
 		if(msg != NULL){
-			*msg = P_STACK_ERROR_ALLOCATION_FAILED;
+			*msg = SP_STACK_ERROR_ALLOCATION_FAILED;
 		}
 		return NULL;
 	}
 	
 	//return the new stack and update message if necsessary:
-	if(msg != null){
-		*msg = P_STACK_SUCCESS;
+	if(msg != NULL){
+		*msg = SP_STACK_SUCCESS;
 	}
 	return s;
     
@@ -83,7 +88,7 @@ void spStackDestroy(SP_STACK* stack) {
 	free(stack->array);
 	
 	//free stack:
-	free(stack)
+	free(stack);
 }
 
 /**
@@ -106,15 +111,15 @@ SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg) {
 	
 	//check whether stack is null or empty, and update
 	//msg accordingly
-	if(!checkStack(stack, msg)){
-		return NULL
+	if(!checkStack(stack, msg, PEAK)){
+		return NULL;
 	}
 	
 	//return top element:
 	if(msg != NULL){
 		*msg = SP_STACK_SUCCESS;
 	}
-	return (stack->array)[stack->size];
+	return (stack->array) + stack->size;
 }
 
 /**
@@ -180,11 +185,40 @@ bool spStackIsEmpty(SP_STACK* stack, SP_STACK_MSG* msg) {
 
 /**
  * Used by other functions. Checks whether stack
- * is null or empty, and updates msg accordingly.
+ * is null, empty or full, and updates msg accordingly.
  * 
  * returns true if not empty and not null
  * 
  */
-bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg) {
-	//TODO
+bool checkStack(SP_STACK* stack, SP_STACK_MSG* msg, Operation op) {
+	
+	//check whether stack is null:
+	if(stack == NULL){
+		if(msg != NULL){
+			*msg = SP_STACK_ERROR_NULL_ARGUMENT;
+		}
+		return false;
+	}
+	
+	//check whether stack is empty when trying to read:
+	if(stack->size == 0 && op == PEAK){
+		if(msg != NULL){
+			*msg = SP_STACK_ERROR_IS_EMPTY;
+		}
+		return false;
+	}
+	
+	//check whether stack is full and trying to write:
+	if(stack->size == MAX_STACK_SIZE && op == PUSH){
+		if(msg != NULL){
+			*msg = SP_STACK_ERROR_ALLOCATION_FAILED;
+		}
+		return false;
+	}
+	
+	//all OK:
+	if(msg != NULL){
+		*msg = SP_STACK_SUCCESS;
+	}
+	return true;
 }
