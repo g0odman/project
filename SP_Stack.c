@@ -79,6 +79,7 @@ void spStackDestroy(SP_STACK* stack) {
 	//recursivly delete if no more pointers to this
 	if(stack->pointerCounter <= 0){
 		spStackDestroy(stack->next);
+		free(stack->element);
 		free(stack);
 	}
 }
@@ -107,7 +108,7 @@ SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg) {
 	//msg accordingly
 	if(!checkStack(stack, msg, PEAK)){ return NULL; }
 	
-	printf("%f\n", stack->element->value);
+	printf("%f\n", stack->element->value); //no seg fault!? why??
 	
 	return stack->element;
 }
@@ -165,9 +166,16 @@ SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG*
 	//make sure stack isn't null:
 	if(!checkStack(stack, msg, PUSH)) { return stack; }
 	
-	//make new stack with additional element:
-	SP_STACK *toRet =  makeNode(&newElement, stack);
+	//copy element:
+	SP_STACK_ELEMENT* e = (SP_STACK_ELEMENT*)malloc(sizeof(SP_STACK_ELEMENT));
+	e->value = newElement.value;
+	e->type = newElement.type;
 	
+	//make new stack with additional element:
+	SP_STACK *toRet =  makeNode(e, stack);
+	
+	//TODO remove these:
+	spStackDestroy(stack);
 	printf("%f	%f\n", newElement.value, toRet->element->value);
 	
 	//make sure malloc didn't fail:
