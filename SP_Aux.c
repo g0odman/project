@@ -5,23 +5,26 @@
 
 
 void parse(char * line){
+	
+	//tokenize input:
     char * tok = strtok(line,"\t\r\n");
-    SP_STACK_MSG * msg= malloc(2);
+    
+    //initialize stack and msg used by stack:
+    SP_STACK_MSG * msg= malloc(2); //change this to malloc(sizeof(..)), no?
     SP_STACK *numbers, *operations;
-    bool getnum = true;//true if we expect a number
+    
+    //boolean used to determine whether to expect number or operation:
+    bool getnum = true;
 
+    
+    //make stacks and validate that they were succesfull:
     numbers = spStackCreate(msg);
-
-    //Valdate that the stack was created correctly
-    if(*msg == SP_STACK_ERROR_ALLOCATION_FAILED)
-        return;
-
+    if(*msg == SP_STACK_ERROR_ALLOCATION_FAILED) { return; }
+    
     operations = spStackCreate(msg);
+    if(*msg == SP_STACK_ERROR_ALLOCATION_FAILED) { return; }
 
-    //Valdate that the stack was created correctly
-    if(*msg == SP_STACK_ERROR_ALLOCATION_FAILED)
-        return;
-
+    
     while(tok != NULL){
 
         SP_STACK_ELEMENT_TYPE  type = getType(tok);
