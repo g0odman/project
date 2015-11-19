@@ -135,7 +135,7 @@ SP_STACK* spStackPop(SP_STACK* stack, SP_STACK_MSG* msg) {
 	SP_STACK *newTop = stack->next;
 	newTop->pointerCounter++; //make it also a top
 	
-	//spStackDestroy(stack) //not sure whether supposed to or not
+	spStackDestroy(stack) //not sure whether supposed to or not
 	
 	return newTop;
 }
