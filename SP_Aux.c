@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include "SP_Aux.h"
 
-
+/**
+ *  Main function, parses given input and calculates result.
+ */
 void parse(char * line){
 	
 	//tokenize input:
@@ -35,19 +37,19 @@ void parse(char * line){
             return;
         }
 
-        //Push into stacks
+        //make element to push into stack:
         SP_STACK_ELEMENT current;
         current.type = type;
 
-        //Check that the order rezieved was correct.
+        //Check that the order recieved was correct, and push into correct stack:
         if(type == NUMBER && getnum){
             current.value = atoi(tok);
-            numbers = spStackPush(numbers, current,msg);
+            numbers = spStackPush(numbers, current, msg);
         }
         else if(!getnum && type != NUMBER){
-            while (!(spStackIsEmpty(operations,msg) ||getRank(spStackTop(operations,msg)) < getRank(&current))){
-                if(!perform(numbers,operations))
-                    return;
+            while (!(spStackIsEmpty(operations,msg) || 
+            		getRank(spStackTop(operations,msg)) < getRank(&current))){
+                if(!perform(numbers,operations) { return; }
             }
             operations = spStackPush(operations,current,msg);
         }
@@ -55,7 +57,7 @@ void parse(char * line){
             printf("Invalid Expression!\n");
             return;
         }
-        getnum = !getnum; //For next time
+        getnum = !getnum; //For next time, expect opposit of what recieved
         printf("Stack Sizes:\n\tNumbers:\t%d\n\tOperations:\t%d\n",numbers->size,operations->pointerCounter);
 
         tok = strtok(NULL,"\t\r\n"); //Get the next token.
@@ -65,6 +67,7 @@ void parse(char * line){
         printf("Invalid Expression!\n");
         return;
     }
+    
     while (!(spStackIsEmpty(operations,msg))){
         if(!(perform(numbers,operations))){
             printf("Invalid Expression!\n");
@@ -72,7 +75,8 @@ void parse(char * line){
         }
     
     }
-    printf("Res = %f",(*spStackTop(numbers,msg)).value);
+    
+    printf("Res = %f",(*spStackTop(numbers,msg)).value); //doing (*x).val is like x->val
 
     //Free stacks
     free(msg);
@@ -101,6 +105,7 @@ bool perform(SP_STACK* numbers, SP_STACK* operations){
         free(msg);
         return true;
 }
+
 double operate(double x,double y, SP_STACK_ELEMENT_TYPE op,bool* valid){
     switch (op){
         case PLUS:
@@ -185,13 +190,17 @@ bool isNumber(char * tok){
 }
 
 bool isExit(char * tok){
-    char * temp = (char *) malloc(3);
+    char * temp = (char *) malloc(3); //need to free as well!!!
 
     //Check if the first two chars are correct.
     strncpy(temp,tok,2);
 
     //And make sure that it is the correct length
-    if(strcmp(temp,"<>")==0 && strlen(tok) == 3)
+    if(strcmp(temp,"<>")==0 && strlen(tok) == 3) {
+    	free(temp);
         return true;
+    }
+    
+    free(temp);
     return false;
 }

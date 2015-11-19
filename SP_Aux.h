@@ -32,7 +32,7 @@ SP_STACK_ELEMENT_TYPE get_type(char * tok);
  * @return
  *              The result of the equation.
  */
-bool is_exit(char * tok);
+bool isExit(char * tok);
 /**
  * Check if the input was an exit code.
  *
