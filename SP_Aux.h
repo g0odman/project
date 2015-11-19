@@ -11,7 +11,7 @@
  * @return
  *              The result of the equation.
  */
-double parse(char * line);
+void parse(char * line);
 /**
  * Recieve a token and check for its type
  *
