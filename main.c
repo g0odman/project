@@ -14,7 +14,7 @@ int main(){
     while (fgets(line,MAX_LINE_LENGTH,stdin)!=NULL){
     	
     	//check whether need to exit:
-        if(is_exit(line)) { break; }
+        if(isExit(line)) { break; }
         
         //run parser: (see SP_Aux)
         parse(line);
