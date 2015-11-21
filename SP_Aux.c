@@ -49,7 +49,7 @@ void parse(char * line){
         else if(!getnum && type != NUMBER){
             while (!(spStackIsEmpty(operations,msg) || 
             		getRank(spStackTop(operations,msg)) < getRank(&current))){
-                if(!perform(numbers,operations) { return; }
+                if(!perform(numbers,operations)) { return; }
             }
             operations = spStackPush(operations,current,msg);
         }
@@ -58,7 +58,6 @@ void parse(char * line){
             return;
         }
         getnum = !getnum; //For next time, expect opposit of what recieved
-        printf("Stack Sizes:\n\tNumbers:\t%d\n\tOperations:\t%d\n",numbers->size,operations->pointerCounter);
 
         tok = strtok(NULL,"\t\r\n"); //Get the next token.
     }
@@ -75,8 +74,8 @@ void parse(char * line){
         }
     
     }
-    
-    printf("Res = %f",(*spStackTop(numbers,msg)).value); //doing (*x).val is like x->val
+    double x = (*spStackTop(numbers,msg)).value;    
+    printf("Res = %f\n",x); //doing (*x).val is like x->val
 
     //Free stacks
     free(msg);
@@ -87,14 +86,15 @@ void parse(char * line){
 bool perform(SP_STACK* numbers, SP_STACK* operations){
         bool * valid = true;
         SP_STACK_MSG * msg= malloc(2);
-        int x = (*spStackTop(numbers,msg)).value;
+        double x = (*spStackTop(numbers,msg)).value;
         numbers = spStackPop(numbers,msg);
-        int y = (* spStackTop(numbers,msg)).value;
+        double y = (* spStackTop(numbers,msg)).value;
         numbers = spStackPop(numbers,msg);
-        SP_STACK_ELEMENT* op = spStackTop(numbers,msg);
+        SP_STACK_ELEMENT *op = spStackTop(numbers,msg);
+	printf(op == NULL ?"Bad" :"Good");
         operations = spStackPop(numbers,msg);
         SP_STACK_ELEMENT new;
-        new.value = operate(x,y,(* op).type,valid);
+        new.value = operate(x,y,op->type,valid);
         printf("The new value is %f\n",new.value);
         if(!(*valid)){
             printf("Invalid Result!\n");
