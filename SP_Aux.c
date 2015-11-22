@@ -21,11 +21,9 @@ void parse(char * line){
 
     
     //make stacks and validate that they were succesfull:
-    numbers = spStackCreate(msg);
-    if(*msg == SP_STACK_ERROR_ALLOCATION_FAILED) { return; }
-    
-    operations = spStackCreate(msg);
-    if(*msg == SP_STACK_ERROR_ALLOCATION_FAILED) { return; }
+    if((numbers = spStackCreate(msg))==NULL) { return; }
+        
+    if((operations = spStackCreate(msg))==NULL) { return; }
 
     
     while(tok != NULL){
@@ -110,6 +108,7 @@ SP_STACK_ELEMENT perform(SP_STACK* numbers, SP_STACK* operations){
         	new.type = NUMBER;
         	numbers = spStackPush(numbers, new, msg);
         }
+        free(msg);
         free(ans);
         free(msg); //need to free!!
         return new;
@@ -201,17 +200,5 @@ bool isNumber(char * tok){
 }
 
 bool isExit(char * tok){
-    char * temp = (char *) malloc(3); //need to free as well!!!
-
-    //Check if the first two chars are correct.
-    strncpy(temp,tok,2);
-
-    //And make sure that it is the correct length
-    if(strcmp(temp,"<>")==0 && strlen(tok) == 3) {
-    	free(temp);
-        return true;
-    }
-    
-    free(temp);
-    return false;
+    return strncmp(tok,"<>",2)==0 && strlen(tok) == 3;
 }
