@@ -110,7 +110,6 @@ SP_STACK_ELEMENT perform(SP_STACK* numbers, SP_STACK* operations){
         }
         free(msg);
         free(ans);
-        free(msg); //need to free!!
         return new;
 }
 
