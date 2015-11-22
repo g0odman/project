@@ -96,8 +96,8 @@ void parse(char * line){
 }
 
 SP_STACK_ELEMENT perform(SP_STACK* numbers, SP_STACK* operations){
-        SP_STACK_MSG * msg= malloc(2); //change this to malloc(sizeof(..)), no?
-        double *ans = malloc(1);
+        SP_STACK_MSG * msg= malloc(sizeof(SP_STACK_MSG)); //change this to malloc(sizeof(..)), no?
+        double *ans = malloc(sizeof(double));
         double y = spStackTop(numbers,msg)->value;
         numbers = spStackPop(numbers,msg);
         double x = spStackTop(numbers,msg)->value;
@@ -105,12 +105,13 @@ SP_STACK_ELEMENT perform(SP_STACK* numbers, SP_STACK* operations){
         SP_STACK_ELEMENT new;
         if(!operate(x,y,op,ans))
             new.type = UNKNOWN;
-        else{
-        new.value = *ans;
-        new.type = NUMBER;
-        numbers = spStackPush(numbers, new, msg);
+        else {
+        	new.value = *ans;
+        	new.type = NUMBER;
+        	numbers = spStackPush(numbers, new, msg);
         }
         free(ans);
+        free(msg); //need to free!!
         return new;
 }
 
@@ -149,7 +150,7 @@ SP_STACK_ELEMENT_TYPE getType(char * tok){
     //Check if it is a number
     if(isNumber(tok))
         return NUMBER;
-    //If not make sure that it is teh correct length
+    //If not make sure that it is the correct length
     else if(strlen(tok) !=1)
         return UNKNOWN;
     //return the correct value
