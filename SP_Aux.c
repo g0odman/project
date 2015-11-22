@@ -9,11 +9,12 @@
 void parse(char * line){
 	
 	//tokenize input:
-    char * tok = strtok(line,"\t\r\n");
+    char * tok = strtok(line," \t\r\n");
     
     //initialize stack and msg used by stack:
     SP_STACK_MSG * msg= malloc(2); //change this to malloc(sizeof(..)), no?
     SP_STACK *numbers, *operations;
+    SP_STACK_ELEMENT ans;
     
     //boolean used to determine whether to expect number or operation:
     bool getnum = true;
@@ -49,7 +50,15 @@ void parse(char * line){
         else if(!getnum && type != NUMBER){
             while (!(spStackIsEmpty(operations,msg) || 
             		getRank(spStackTop(operations,msg)) < getRank(&current))){
-                if(!perform(numbers,operations)) { return; }
+                ans = perform(numbers,operations);
+                if(ans.type ==UNKNOWN){
+                    printf("Invalid Result!\n");
+                    return;
+                }
+                operations = spStackPop(operations,msg);
+                numbers = spStackPop(numbers,msg);
+                numbers = spStackPop(numbers,msg);
+                numbers = spStackPush(numbers,ans,msg);
             }
             operations = spStackPush(operations,current,msg);
         }
@@ -59,7 +68,7 @@ void parse(char * line){
         }
         getnum = !getnum; //For next time, expect opposit of what recieved
 
-        tok = strtok(NULL,"\t\r\n"); //Get the next token.
+        tok = strtok(NULL," \t\r\n"); //Get the next token.
     }
     //IF we finished expecting a number, then there is a problem.
     if(getnum){
@@ -68,14 +77,17 @@ void parse(char * line){
     }
     
     while (!(spStackIsEmpty(operations,msg))){
-        if(!(perform(numbers,operations))){
-            printf("Invalid Expression!\n");
-            return;
+        SP_STACK_ELEMENT ans = perform(numbers,operations);
+        if(ans.type ==UNKNOWN){
+            printf("Invalid Result!\n");
+            break;
         }
-    
+        operations = spStackPop(operations,msg);
+        numbers = spStackPop(numbers,msg);
+        numbers = spStackPop(numbers,msg);
+        numbers = spStackPush(numbers,ans,msg);
     }
-    double x = (*spStackTop(numbers,msg)).value;    
-    printf("Res = %f\n",x); //doing (*x).val is like x->val
+    printf("res = %f\n", spStackTop(numbers,msg)->value); //doing (*x).val is like x->val
 
     //Free stacks
     free(msg);
@@ -83,56 +95,54 @@ void parse(char * line){
     spStackDestroy(numbers);
 }
 
-bool perform(SP_STACK* numbers, SP_STACK* operations){
-        bool * valid = true;
-        SP_STACK_MSG * msg= malloc(2);
-        double x = (*spStackTop(numbers,msg)).value;
+SP_STACK_ELEMENT perform(SP_STACK* numbers, SP_STACK* operations){
+        SP_STACK_MSG * msg= malloc(2); //change this to malloc(sizeof(..)), no?
+        double *ans = malloc(1);
+        double y = spStackTop(numbers,msg)->value;
         numbers = spStackPop(numbers,msg);
-        double y = (* spStackTop(numbers,msg)).value;
-        numbers = spStackPop(numbers,msg);
-        SP_STACK_ELEMENT *op = spStackTop(numbers,msg);
-	printf(op == NULL ?"Bad" :"Good");
-        operations = spStackPop(numbers,msg);
+        double x = spStackTop(numbers,msg)->value;
+        SP_STACK_ELEMENT_TYPE op = spStackTop(operations,msg)->type;
         SP_STACK_ELEMENT new;
-        new.value = operate(x,y,op->type,valid);
-        printf("The new value is %f\n",new.value);
-        if(!(*valid)){
-            printf("Invalid Result!\n");
-            return false;
-        }
+        if(!operate(x,y,op,ans))
+            new.type = UNKNOWN;
+        else{
+        new.value = *ans;
         new.type = NUMBER;
-        numbers = spStackPush(numbers,new,msg);
-        free(msg);
-        return true;
+        numbers = spStackPush(numbers, new, msg);
+        }
+        free(ans);
+        return new;
 }
 
-double operate(double x,double y, SP_STACK_ELEMENT_TYPE op,bool* valid){
+bool operate(double x,double y, SP_STACK_ELEMENT_TYPE op,double *ans){
     switch (op){
         case PLUS:
-            return x +y;
+            *ans = x+y;
+            break;
         case MINUS:
-            return x-y;
+            *ans =  x - y;
+            break;
         case MULTIPLICATION:
-            return x*y;
+            *ans =  x * y;
+            break;
         case DIVISION:
-            if(y ==0){
-                valid = false;
-                return 0;
-            }
-            return x/y;
+            if(y ==0)
+                return false;
+            *ans =  x/y;
+            break;
         case DOLLAR:
             if( x >y){
-                (* valid) = false;
-                return 0;
+                return false;
             }
             double sum = 0;
             for(double i =x; i <=y;i++)
                 sum +=i;
-            return sum;
+            *ans =  sum;
+            break;
         default:
-            (*valid) = false;
-            return 0;
+            return false;
     }
+    return true;
 }
 
 SP_STACK_ELEMENT_TYPE getType(char * tok){

@@ -102,13 +102,11 @@ void spStackDestroy(SP_STACK* stack) {
  */
 SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg) {
 	
-	//printf("%f\n", stack->element->value); //causes seg fault ! (?!)
 	
 	//check whether stack is null or empty, and update
 	//msg accordingly
 	if(!checkStack(stack, msg, PEAK)){ return NULL; }
 	
-	printf("%f\n", stack->element->value); //no seg fault!? why??
 	
 	return stack->element;
 }
@@ -176,7 +174,6 @@ SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG*
 	
 	//TODO remove these:
 	spStackDestroy(stack);
-	printf("%f	%f\n", newElement.value, toRet->element->value);
 	
 	//make sure malloc didn't fail:
 	if(!checkStack(toRet, msg, MAKE)) { return stack; }

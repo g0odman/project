@@ -71,7 +71,7 @@ int getRank(SP_STACK_ELEMENT* op);
  *                                  if it is undefined for some reason, 0.
  */
 
-double operate(double x,double y, SP_STACK_ELEMENT_TYPE op,bool* valid);
+bool operate(double x,double y, SP_STACK_ELEMENT_TYPE op,double *new);
 
 /**
  * Performs a single mathematicla operation using the values from the two stacks
@@ -86,5 +86,5 @@ double operate(double x,double y, SP_STACK_ELEMENT_TYPE op,bool* valid);
  *                                  If it was a succes return true, else false.
  */
 
-bool perform(SP_STACK* numbers, SP_STACK* operations);
+SP_STACK_ELEMENT perform(SP_STACK* numbers, SP_STACK* operations);
 #endif /* SP_Aux_H_ */
