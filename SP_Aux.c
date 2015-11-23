@@ -17,7 +17,7 @@ void parse(char * line){
     SP_STACK_ELEMENT ans;
     
     //boolean used to determine whether to expect number or operation:
-    bool getnum = true;
+    bool getnum = true, isvalid =true;
 
     
     //make stacks and validate that they were succesfull:
@@ -78,6 +78,7 @@ void parse(char * line){
         SP_STACK_ELEMENT ans = perform(numbers,operations);
         if(ans.type ==UNKNOWN){
             printf("Invalid Result!\n");
+            isvalid = false;
             break;
         }
         operations = spStackPop(operations,msg);
@@ -85,7 +86,8 @@ void parse(char * line){
         numbers = spStackPop(numbers,msg);
         numbers = spStackPush(numbers,ans,msg);
     }
-    printf("res = %f\n", spStackTop(numbers,msg)->value); //doing (*x).val is like x->val
+    if(isvalid)
+        printf("res = %f\n", spStackTop(numbers,msg)->value); //doing (*x).val is like x->val
 
     //Free stacks
     free(msg);
