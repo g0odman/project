@@ -25,10 +25,8 @@ SP_STACK* makeNode(SP_STACK_ELEMENT* value, SP_STACK* next);
  *
  */
 struct sp_stack_struct {
-    int size;
     SP_STACK_ELEMENT *element;
     SP_STACK *next;
-    int pointerCounter;
 };
 
 /**
@@ -73,15 +71,14 @@ void spStackDestroy(SP_STACK* stack) {
 	
 	//check node isn't null:
 	if(stack == NULL) { return; }
-
-	stack->pointerCounter--;
 	
-	//recursivly delete if no more pointers to this
-	if(stack->pointerCounter <= 0){
+	//recursivly delete
+	if(stack->next != NULL){
 		spStackDestroy(stack->next);
-		free(stack->element);
-		free(stack);
 	}
+	
+	free(stack->element);
+	free(stack);
 }
 
 /**
@@ -131,9 +128,10 @@ SP_STACK* spStackPop(SP_STACK* stack, SP_STACK_MSG* msg) {
 	if(!checkStack(stack, msg, PEAK)) { return stack; }
 	
 	SP_STACK *newTop = stack->next;
-	newTop->pointerCounter++; //make it also a top
 	
-	spStackDestroy(stack); //not sure whether supposed to or not
+	//free old stack:
+	free(stack->element);
+	free(stack);
 	
 	return newTop;
 }
@@ -172,9 +170,6 @@ SP_STACK* spStackPush(SP_STACK* stack, SP_STACK_ELEMENT newElement,SP_STACK_MSG*
 	//make new stack with additional element:
 	SP_STACK *toRet =  makeNode(e, stack);
 	
-	//TODO remove these:
-	spStackDestroy(stack);
-	
 	//make sure malloc didn't fail:
 	if(!checkStack(toRet, msg, MAKE)) { return stack; }
 	
@@ -199,7 +194,7 @@ bool spStackIsEmpty(SP_STACK* stack, SP_STACK_MSG* msg) {
 	//check whether stack is null:
 	if(!checkStack(stack, msg, EMPTY)) { return false; };
 	
-	return (stack->size == 0);
+	return (stack->next == NULL);
 }
 
 
@@ -231,17 +226,9 @@ bool checkStack(const SP_STACK* stack, SP_STACK_MSG* msg, Operation op) {
 	}
 	
 	//check whether stack is empty when trying to read:
-	if(stack->size == 0 && op == PEAK){
+	if(stack->next == NULL && op == PEAK){
 		if(msg != NULL){
 			*msg = SP_STACK_ERROR_IS_EMPTY;
-		}
-		return false;
-	}
-	
-	//check whether stack is full and trying to write:
-	if(stack->size >= MAX_STACK_SIZE && op == PUSH){
-		if(msg != NULL){
-			*msg = SP_STACK_ERROR_ALLOCATION_FAILED;
 		}
 		return false;
 	}
@@ -266,13 +253,6 @@ SP_STACK* makeNode(SP_STACK_ELEMENT* element, SP_STACK* next) {
 	//initialize:
 	s->element = element;
 	s->next = next;
-	s->pointerCounter = 1;
-	if(next == NULL){
-		s->size = 0;
-	} else {
-		s->size = next->size + 1;
-		next->pointerCounter++;
-	}
 	
 	return s;
 }
