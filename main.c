@@ -13,11 +13,10 @@ int main(){
     //main loop:
     while (fgets(line,MAX_LINE_LENGTH,stdin)!=NULL){
     	
-    	//check whether need to exit:
         if(isExit(line)) { break; }
         
-        //run parser: (see SP_Aux)
-        parse(line);
+        parse(line); //see SP_Aux
+        
     }
     
     printf("Exiting...\n");
