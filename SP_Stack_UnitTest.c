@@ -82,8 +82,52 @@ bool TEST2(){
 	return 1;
 }
 
+bool TEST3(){
+	/**
+	 * corner case testing
+	 */
+	
+	SP_STACK_MSG msg;
+	SP_STACK_ELEMENT* top = NULL;
+	SP_STACK_ELEMENT e = {.type = NUMBER, .value = 3};
+
+	
+	//make empty stack
+	SP_STACK* stack = spStackCreate(&msg);
+	ASSERT_TRUE(spStackIsEmpty(stack, &msg));
+	
+	//make sure destroying NULL doesn't cause problem:
+	spStackDestroy(NULL);
+	
+	//try getting top when stack is empty or NULL:
+	top = spStackTop(stack, &msg);
+	ASSERT_TRUE(top == NULL && msg == SP_STACK_ERROR_IS_EMPTY);
+	top = spStackTop(NULL, &msg);
+	ASSERT_TRUE(top == NULL && msg == SP_STACK_ERROR_NULL_ARGUMENT);
+	
+	//try removing top element when stack is empty or NULL:
+	stack = spStackPop(stack, &msg);
+	ASSERT_TRUE(msg == SP_STACK_ERROR_IS_EMPTY);
+	spStackPop(NULL, &msg);
+	ASSERT_TRUE(msg == SP_STACK_ERROR_NULL_ARGUMENT);
+	
+	//try inserting to NULL:
+	spStackPush(NULL, e, &msg);
+	ASSERT_TRUE(msg == SP_STACK_ERROR_NULL_ARGUMENT);
+	
+	//try checking size of NULL:
+	spStackIsEmpty(NULL, &msg);
+	ASSERT_TRUE(msg == SP_STACK_ERROR_NULL_ARGUMENT);
+	
+	
+	spStackDestroy(stack);
+	
+	return 1;
+}
+
 int main(){
 	RUN_TEST(TEST1);
 	RUN_TEST(TEST2);
+	RUN_TEST(TEST3);
 	return 0;
 }
