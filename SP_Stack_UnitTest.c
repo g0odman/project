@@ -44,6 +44,10 @@ bool TEST1(){
 
 bool TEST2(){
 	
+	/**
+	 * basic test, inserting and removing 100 elements
+	 */
+	
 	SP_STACK_MSG msg;
 	SP_STACK_ELEMENT* top = NULL;
 
@@ -57,12 +61,21 @@ bool TEST2(){
 		SP_STACK_ELEMENT new = {.type = NUMBER, .value = i};
 		stack = spStackPush(stack,new,&msg);
 		ASSERT_TRUE(msg == SP_STACK_SUCCESS);
-		
 		top = spStackTop(stack, &msg);
 		ASSERT_TRUE(top->type == new.type && top->value == new.value && msg==SP_STACK_SUCCESS);
 	}
 	
 	ASSERT_TRUE(spStackIsEmpty(stack, &msg) == false);
+	
+	//remove items:
+	for(int i = 99; i>=0; i--){
+		top = spStackTop(stack, &msg);
+		ASSERT_TRUE(top->type == NUMBER && top->value == i && msg==SP_STACK_SUCCESS);
+		stack = spStackPop(stack, &msg);
+		ASSERT_TRUE(msg == SP_STACK_SUCCESS);
+	}
+	
+	ASSERT_TRUE(spStackIsEmpty(stack, &msg) == true);
 	
 	spStackDestroy(stack);
 	
