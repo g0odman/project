@@ -22,8 +22,10 @@ void parse(char * line){
 
     
     //make stacks and validate that they were succesfull:
-    if((numbers = spStackCreate(msg))==NULL) { return; }
-    if((operations = spStackCreate(msg))==NULL) { return; }
+    numbers = spStackCreate(msg);
+    if(numbers == NULL || *msg != SP_STACK_SUCCESS) { return; }
+    operations = spStackCreate(msg);
+    if(operations == NULL || *msg != SP_STACK_SUCCESS) { return; }
 
     
     while(tok != NULL){

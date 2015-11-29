@@ -99,7 +99,6 @@ void spStackDestroy(SP_STACK* stack) {
  */
 SP_STACK_ELEMENT* spStackTop (SP_STACK* stack, SP_STACK_MSG* msg) {
 	
-	
 	//check whether stack is null or empty, and update
 	//msg accordingly
 	if(!checkStack(stack, msg, PEAK)){ return NULL; }
