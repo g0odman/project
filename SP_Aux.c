@@ -4,7 +4,8 @@
 #include "SP_Aux.h"
 
 /**
- *  Main function, parses given input and calculates result.
+ *  Main function, parses given input and calculates result. Prints
+ *  all necsesary things.
  */
 void parse(char * line){
 	
@@ -12,17 +13,16 @@ void parse(char * line){
     char * tok = strtok(line," \t\r\n");
     
     //initialize stack and msg used by stack:
-    SP_STACK_MSG * msg= malloc(2); //change this to malloc(sizeof(..)), no?
+    SP_STACK_MSG * msg = malloc(sizeof(SP_STACK_MSG)); //need to free this, if exit suddenly.
     SP_STACK *numbers, *operations;
     SP_STACK_ELEMENT ans;
     
     //boolean used to determine whether to expect number or operation:
-    bool getnum = true, isvalid =true;
+    bool getnum = true, isvalid = true;
 
     
     //make stacks and validate that they were succesfull:
     if((numbers = spStackCreate(msg))==NULL) { return; }
-        
     if((operations = spStackCreate(msg))==NULL) { return; }
 
     
@@ -127,17 +127,17 @@ bool operate(double x,double y, SP_STACK_ELEMENT_TYPE op,double *ans){
             *ans =  x * y;
             break;
         case DIVISION:
-            if(y ==0)
+            if(y == 0)
                 return false;
             *ans =  x/y;
             break;
         case DOLLAR:
-            if( x >y){
+            if( x > y){
                 return false;
             }
             double sum = 0;
-            for(double i =x; i <=y;i++)
-                sum +=i;
+            for(double i = x; i <= y; i++)
+                sum += i;
             *ans =  sum;
             break;
         default:
@@ -147,12 +147,15 @@ bool operate(double x,double y, SP_STACK_ELEMENT_TYPE op,double *ans){
 }
 
 SP_STACK_ELEMENT_TYPE getType(char * tok){
-    //Check if it is a number
+    
+	//Check if it is a number
     if(isNumber(tok))
         return NUMBER;
+    
     //If not make sure that it is the correct length
     else if(strlen(tok) !=1)
         return UNKNOWN;
+    
     //return the correct value
     switch(tok[0]) {
         case '+'  :
@@ -171,7 +174,7 @@ SP_STACK_ELEMENT_TYPE getType(char * tok){
 }
 
 int getRank(SP_STACK_ELEMENT* op){
-    switch ((*op).type){
+    switch (op->type){
         //lowest order
         case PLUS:
         case MINUS:
@@ -181,16 +184,18 @@ int getRank(SP_STACK_ELEMENT* op){
         case MULTIPLICATION:
         case DIVISION:
             return 2;
+            
         //highest
         case DOLLAR:
             return 3;
+            
         default:
             return 0;
     }
 }
 
 bool isNumber(char * tok){
-    //iterate over all of tok and check the ascii values
+    //iterate over all of tok and check that the ascii values are digits
     int i =0;
     while(tok[i] != '\0'){
         if(tok[i] < '0' || tok[i] > '9')
@@ -201,5 +206,5 @@ bool isNumber(char * tok){
 }
 
 bool isExit(char * tok){
-    return strncmp(tok,"<>",2)==0 && strlen(tok) == 3;
+    return (strncmp(tok,"<>",2) == 0 && strlen(tok) == 3);
 }
