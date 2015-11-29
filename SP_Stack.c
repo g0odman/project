@@ -10,7 +10,7 @@
 //used by checkStack:
 typedef enum {PEAK, PUSH, EMPTY, MAKE} Operation;
 
-//declaring auxillary functions:
+//declaring auxillary functions:	(for internal use only)
 bool checkStack(const SP_STACK* stack, SP_STACK_MSG* msg, Operation op);
 SP_STACK* makeNode(SP_STACK_ELEMENT* value, SP_STACK* next);
 
@@ -77,7 +77,7 @@ void spStackDestroy(SP_STACK* stack) {
 		spStackDestroy(stack->next);
 	}
 	
-	free(stack->element);
+	if(stack->element != NULL){ free(stack->element); }
 	free(stack);
 }
 
@@ -130,7 +130,7 @@ SP_STACK* spStackPop(SP_STACK* stack, SP_STACK_MSG* msg) {
 	SP_STACK *newTop = stack->next;
 	
 	//free old stack:
-	free(stack->element);
+	if(stack->element != NULL){ free(stack->element); }
 	free(stack);
 	
 	return newTop;
