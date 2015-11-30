@@ -50,15 +50,11 @@ void parse(char * line){
         else if(!getnum && type != NUMBER){
             while (!(spStackIsEmpty(operations,msg) || 
             		getRank(spStackTop(operations,msg)) < getRank(&current))){
-                ans = perform(numbers,operations);
+                    ans = perform(&numbers,&operations);
                 if(ans.type ==UNKNOWN){
                     printf("Invalid Result!\n");
                     return;
                 }
-                operations = spStackPop(operations,msg);
-                numbers = spStackPop(numbers,msg);
-                numbers = spStackPop(numbers,msg);
-                numbers = spStackPush(numbers,ans,msg);
             }
             operations = spStackPush(operations,current,msg);
         }
@@ -77,16 +73,12 @@ void parse(char * line){
     }
     
     while (!(spStackIsEmpty(operations,msg))){
-        SP_STACK_ELEMENT ans = perform(numbers,operations);
+        SP_STACK_ELEMENT ans = perform(&numbers,&operations);
         if(ans.type ==UNKNOWN){
             printf("Invalid Result!\n");
             isvalid = false;
             break;
         }
-        operations = spStackPop(operations,msg);
-        numbers = spStackPop(numbers,msg);
-        numbers = spStackPop(numbers,msg);
-        numbers = spStackPush(numbers,ans,msg);
     }
     if(isvalid)
         printf("res = %f\n", spStackTop(numbers,msg)->value); //doing (*x).val is like x->val
@@ -97,20 +89,22 @@ void parse(char * line){
     spStackDestroy(numbers);
 }
 
-SP_STACK_ELEMENT perform(SP_STACK* numbers, SP_STACK* operations){
+SP_STACK_ELEMENT perform(SP_STACK **numbers, SP_STACK **operations){
         SP_STACK_MSG * msg= malloc(sizeof(SP_STACK_MSG)); //change this to malloc(sizeof(..)), no?
         double *ans = malloc(sizeof(double));
-        double y = spStackTop(numbers,msg)->value;
-        numbers = spStackPop(numbers,msg);
-        double x = spStackTop(numbers,msg)->value;
-        SP_STACK_ELEMENT_TYPE op = spStackTop(operations,msg)->type;
+        double y = spStackTop(*numbers,msg)->value;
+        *numbers = spStackPop(*numbers,msg);
+        double x = spStackTop(*numbers,msg)->value;
+        *numbers = spStackPop(*numbers,msg);
+        SP_STACK_ELEMENT_TYPE op = spStackTop(*operations,msg)->type;
+        *operations = spStackPop(*operations,msg);
         SP_STACK_ELEMENT new;
         if(!operate(x,y,op,ans))
             new.type = UNKNOWN;
         else {
         	new.value = *ans;
         	new.type = NUMBER;
-        	numbers = spStackPush(numbers, new, msg);
+        	*numbers = spStackPush(*numbers, new, msg);
         }
         free(msg);
         free(ans);
@@ -137,10 +131,7 @@ bool operate(double x,double y, SP_STACK_ELEMENT_TYPE op,double *ans){
             if( x > y){
                 return false;
             }
-            double sum = 0;
-            for(double i = x; i <= y; i++)
-                sum += i;
-            *ans =  sum;
+            *ans = ((y-x+1)*(y+x))/2;
             break;
         default:
             return false;

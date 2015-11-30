@@ -96,6 +96,6 @@ bool operate(double x,double y, SP_STACK_ELEMENT_TYPE op,double *ans);
  *                                  If it was a succes return true, else false.
  */
 
-SP_STACK_ELEMENT perform(SP_STACK* numbers, SP_STACK* operations);
+SP_STACK_ELEMENT perform(SP_STACK **numbers, SP_STACK **operations);
 
 #endif /* SP_Aux_H_ */
