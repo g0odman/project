@@ -98,4 +98,21 @@ bool operate(double x,double y, SP_STACK_ELEMENT_TYPE op,double *ans);
 
 SP_STACK_ELEMENT perform(SP_STACK **numbers, SP_STACK **operations);
 
+/**
+ * Frees all of the used memory in parse before returning to the main.
+ *
+ *
+ * @param
+ * 		SP_STACK * numbers - A stack containing the numbers
+ * @param
+ * 		SP_STACK * operations - A stack containing the operations.
+ * @param
+ * 		SP_STACK_MSG *msg - A message.
+ * @return
+ *      Null.
+ */
+
+
+void clean(SP_STACK *numbers,SP_STACK *operations,SP_STACK_MSG *msg);
+
 #endif /* SP_Aux_H_ */

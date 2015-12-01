@@ -20,7 +20,6 @@ void parse(char * line){
     //boolean used to determine whether to expect number or operation:
     bool getnum = true, isvalid = true;
 
-    
     //make stacks and validate that they were succesfull:
     numbers = spStackCreate(msg);
     if(numbers == NULL || *msg != SP_STACK_SUCCESS) { return; }
@@ -34,6 +33,7 @@ void parse(char * line){
 
         //If we don't recognize it, it's probably wrong.
         if(type == UNKNOWN){
+            clean(numbers,operations,msg);
             printf("Invalid Expression!\n");
             return;
         }
@@ -51,8 +51,9 @@ void parse(char * line){
             while (!(spStackIsEmpty(operations,msg) || 
             		getRank(spStackTop(operations,msg)) < getRank(&current))){
                     ans = perform(&numbers,&operations);
-                if(ans.type ==UNKNOWN){
+                if(ans.type ==UNKNOWN){ //Bad input
                     printf("Invalid Result!\n");
+                    clean(numbers,operations,msg);
                     return;
                 }
             }
@@ -60,6 +61,7 @@ void parse(char * line){
         }
         else{
             printf("Invalid Expression!\n");
+            clean(numbers,operations,msg);
             return;
         }
         getnum = !getnum; //For next time, expect opposit of what recieved
@@ -69,6 +71,7 @@ void parse(char * line){
     //IF we finished expecting a number, then there is a problem.
     if(getnum){
         printf("Invalid Expression!\n");
+        clean(numbers,operations,msg);
         return;
     }
     
@@ -84,6 +87,9 @@ void parse(char * line){
         printf("res = %f\n", spStackTop(numbers,msg)->value); //doing (*x).val is like x->val
 
     //Free stacks
+    clean(numbers,operations,msg);
+}
+void clean(SP_STACK *numbers,SP_STACK *operations,SP_STACK_MSG *msg){
     free(msg);
     spStackDestroy(operations);
     spStackDestroy(numbers);
