@@ -75,6 +75,7 @@ void parse(char * line){
         return;
     }
     
+    //finish operating on stacks:
     while (!(spStackIsEmpty(operations,msg))){
         SP_STACK_ELEMENT ans = perform(&numbers,&operations);
         if(ans.type ==UNKNOWN){
@@ -83,12 +84,14 @@ void parse(char * line){
             break;
         }
     }
-    if(isvalid)
-        printf("res = %f\n", spStackTop(numbers,msg)->value); //doing (*x).val is like x->val
+    if(isvalid) {
+        printf("res = %f\n", spStackTop(numbers,msg)->value);
+    }
 
     //Free stacks
     clean(numbers,operations,msg);
 }
+
 void clean(SP_STACK *numbers,SP_STACK *operations,SP_STACK_MSG *msg){
     free(msg);
     spStackDestroy(operations);
@@ -96,14 +99,20 @@ void clean(SP_STACK *numbers,SP_STACK *operations,SP_STACK_MSG *msg){
 }
 
 SP_STACK_ELEMENT perform(SP_STACK **numbers, SP_STACK **operations){
-        SP_STACK_MSG * msg= malloc(sizeof(SP_STACK_MSG)); //change this to malloc(sizeof(..)), no?
+	
+		//allocate memory:
+        SP_STACK_MSG * msg= malloc(sizeof(SP_STACK_MSG));
         double *ans = malloc(sizeof(double));
+        
+        //read next numbers and operation:
         double y = spStackTop(*numbers,msg)->value;
         *numbers = spStackPop(*numbers,msg);
         double x = spStackTop(*numbers,msg)->value;
         *numbers = spStackPop(*numbers,msg);
         SP_STACK_ELEMENT_TYPE op = spStackTop(*operations,msg)->type;
         *operations = spStackPop(*operations,msg);
+        
+        //perform operation:
         SP_STACK_ELEMENT new;
         if(!operate(x,y,op,ans))
             new.type = UNKNOWN;
@@ -112,12 +121,14 @@ SP_STACK_ELEMENT perform(SP_STACK **numbers, SP_STACK **operations){
         	new.type = NUMBER;
         	*numbers = spStackPush(*numbers, new, msg);
         }
+        
+        //exit:
         free(msg);
         free(ans);
         return new;
 }
 
-bool operate(double x,double y, SP_STACK_ELEMENT_TYPE op,double *ans){
+bool operate(double x, double y, SP_STACK_ELEMENT_TYPE op, double *ans){
     switch (op){
         case PLUS:
             *ans = x+y;
@@ -148,8 +159,7 @@ bool operate(double x,double y, SP_STACK_ELEMENT_TYPE op,double *ans){
 SP_STACK_ELEMENT_TYPE getType(char * tok){
     
 	//Check if it is a number
-    if(isNumber(tok))
-        return NUMBER;
+    if(isNumber(tok)) { return NUMBER; }
     
     //If not make sure that it is the correct length
     else if(strlen(tok) !=1)

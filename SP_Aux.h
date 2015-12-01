@@ -79,7 +79,6 @@ int getRank(SP_STACK_ELEMENT* op);
  *              If the operation was valid, then return true, and store result
  *              		in *ans. Otherwise return false.
  */
-
 bool operate(double x,double y, SP_STACK_ELEMENT_TYPE op,double *ans);
 
 /**
@@ -88,18 +87,17 @@ bool operate(double x,double y, SP_STACK_ELEMENT_TYPE op,double *ans);
  *
  *
  * @param
- * 		SP_STACK * numbers - A stack containing the numbers
+ * 		SP_STACK ** numbers - A (pointer to) stack containing the numbers
  * @param
- * 		SP_STACK * operations - A stack containing the operations.
+ * 		SP_STACK ** operations - A (pointer to) stack containing the operations.
  * @return
  *              Perform the top operation in operations, on the top two values in numbers
  *                                  If it was a succes return true, else false.
  */
-
 SP_STACK_ELEMENT perform(SP_STACK **numbers, SP_STACK **operations);
 
 /**
- * Frees all of the used memory in parse before returning to the main.
+ * Frees inputs. (used by parse to clean up before exit)
  *
  *
  * @param
@@ -111,8 +109,6 @@ SP_STACK_ELEMENT perform(SP_STACK **numbers, SP_STACK **operations);
  * @return
  *      Null.
  */
-
-
 void clean(SP_STACK *numbers,SP_STACK *operations,SP_STACK_MSG *msg);
 
 #endif /* SP_Aux_H_ */
